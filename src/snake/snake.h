@@ -3,6 +3,7 @@
 
 #include "../coord/coord.h"
 #include "../size/size.h"
+#include "../apple/apple.h"
 #include <vector>
 
 enum class Direction {
@@ -38,6 +39,8 @@ public:
     const Direction getDirection() const;
 
     const Coord getDirectionVector() const;
+
+    void step(Apple apple);
 };
 
 #endif // SNAKE_H

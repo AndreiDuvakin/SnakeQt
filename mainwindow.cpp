@@ -1,19 +1,29 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 #include <QLabel>
-
+#include <QTimer>
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    this->resizeTable();
-    this->renderTable();
+
+    QTimer::singleShot(100, [=]() { this->resizeTable(); });
+    QTimer::singleShot(100, [=]() { this->renderTable(); });
+
+    this->timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(updateGame()));
+    timer->start(1000);
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::updateGame() {
+    this->game.step();
+    this->renderTable();
 }
 
 void MainWindow::renderTable() {
@@ -34,7 +44,7 @@ void MainWindow::renderTable() {
             }
 
             if (column == appleCoord.x && row == appleCoord.y) {
-                label->setStyleSheet("background-color: red;");
+                label->setStyleSheet("background-color: red");
             }
 
             ui->tableWidget->setCellWidget(row, column, label);

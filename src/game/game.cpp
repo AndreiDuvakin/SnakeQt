@@ -20,3 +20,7 @@ const Apple Game::getApple() const {
 const int Game::getScore() const {
     return this->score;
 }
+
+void Game::step() {
+    this->snake.step(this->apple);
+}

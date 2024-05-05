@@ -1,9 +1,10 @@
 #include "snake.h"
+#include <iostream>
 
-Snake::Snake() : live(true) {}
+Snake::Snake() : live(true), direction(Direction::UP) {}
 
 void Snake::addCoord(const Coord coord) {
-    this->snakeCoords.push_back(coord);
+    this->snakeCoords.insert(this->snakeCoords.begin(), coord);
 }
 
 void Snake::removeCoord() {
@@ -71,3 +72,22 @@ void Snake::setStartPosition(Size fieldSize) {
     this->snakeCoords = startSnakeCoords;
 }
 
+void Snake::step(Apple apple) {
+    Coord headCoord = this->snakeCoords.front();
+    Coord snakeDirection = this->getDirectionVector();
+
+    Coord newCoords = Coord(
+                headCoord.x + snakeDirection.x,
+                headCoord.y + snakeDirection.y
+    );
+
+    this->addCoord(newCoords);
+
+    if (newCoords != apple.getCors()) {
+        this->removeCoord();
+    } else {
+        apple.regenerateCors();
+    }
+
+    this->checkIsAlive();
+}

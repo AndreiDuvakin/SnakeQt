@@ -7,13 +7,15 @@
 class Apple {
 private:
     Coord coord;
+    int maxX;
+    int maxY;
 
 public:
     Apple(int maxX, int maxY);
 
     const Coord getCors() const;
 
-    void regenerateCors(int maxX, int maxY);
+    void regenerateCors();
 };
 
 #endif // APPLE_H

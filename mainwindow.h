@@ -22,5 +22,9 @@ private:
     void resizeTable();
     Game game;
     void renderTable();
+    QTimer *timer;
+
+ private slots:
+    void updateGame();
 };
 #endif // MAINWINDOW_H

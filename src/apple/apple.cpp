@@ -1,19 +1,21 @@
 #include "apple.h"
 #include <cstdlib>
+#include <ctime>
 
-Apple::Apple(int maxX, int maxY) : coord(0, 0) {
-    regenerateCors(maxX, maxY);
+Apple::Apple(int _maxX, int _maxY) : coord(0, 0), maxX(_maxX), maxY(_maxY) {
+    srand(time(nullptr));
+    regenerateCors();
 }
 
-void Apple::regenerateCors(int maxX, int maxY) {
-    if (maxX != 0) {
-        this->coord.x = rand() % maxX;
+void Apple::regenerateCors() {
+    if (this->maxX != 0) {
+        this->coord.x = rand() % this->maxX;
     } else {
         this->coord.x = 0;
     }
 
-    if (maxY != 0) {
-        this->coord.y = rand() % maxY;
+    if (this->maxY != 0) {
+        this->coord.y = rand() % this->maxY;
     } else {
         this->coord.y = 0;
     }

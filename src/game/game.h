@@ -24,6 +24,8 @@ public:
     const int getScore() const;
 
     const Apple getApple() const;
+
+    void step();
 };
 
 #endif // GAME_H
