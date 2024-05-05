@@ -30,5 +30,6 @@ private:
 
  private slots:
     void updateGame();
+    void on_pushButton_clicked();
 };
 #endif // MAINWINDOW_H

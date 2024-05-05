@@ -1,7 +1,9 @@
 #include "game.h"
+#include "../apple/apple.h"
+#include "../field/field.h"
 
 
-Game::Game() : apple(this->field.getSize().width, this->field.getSize().height), score(0) {
+Game::Game() : score(0), apple(this->field.getSize().width, this->field.getSize().height, this->snake.getSnakeCoords()) {
     this->snake.setStartPosition(this->field.getSize());
 }
 

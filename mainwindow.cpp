@@ -10,6 +10,8 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
+    ui->pushButton->setVisible(false);
+
     setFocusPolicy(Qt::StrongFocus);
 
     scene = new QGraphicsScene(this);
@@ -19,7 +21,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     this->timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(updateGame()));
-    timer->start(1000);
+    timer->start(700);
 }
 
 MainWindow::~MainWindow()
@@ -29,9 +31,19 @@ MainWindow::~MainWindow()
 
 void MainWindow::updateGame() {
     this->game.step();
+
+    int snakeLength = this->game.getSnake().getSnakeCoords().size();
+
+    std::string lengthString = std::to_string(snakeLength);
+
+    ui->label->setText("Счет: " + QString::fromStdString(lengthString));
+
     if (!this->game.getSnake().isAlive()) {
         QMessageBox::information(this, "Игра окончена", "Вы проиграли");
+        this->timer->stop();
+        ui->pushButton->setVisible(true);
     }
+
     this->renderTable();
 }
 
@@ -59,10 +71,10 @@ void MainWindow::renderTable() {
 }
 
 void MainWindow::resizeTable() {
-    int tableSize = std::min(this->width(), this->height()) - 20;
+    int tableSize = std::min(this->width(), this->height() - 50);
         QSize newSize(tableSize, tableSize);
 
-    ui->graphicsView->resize(newSize);
+    ui->graphicsView->setFixedSize(newSize);
 
     int newX = (this->width() - tableSize) / 2;
     int newY = (this->height() - tableSize) / 2;
@@ -89,3 +101,11 @@ void MainWindow::keyPressEvent(QKeyEvent *event) {
 void MainWindow::resizeEvent(QResizeEvent *event) {
     this->resizeTable();
 }
+
+void MainWindow::on_pushButton_clicked()
+{
+    MainWindow *w = new MainWindow();
+    w->show();
+    this->close();
+}
+

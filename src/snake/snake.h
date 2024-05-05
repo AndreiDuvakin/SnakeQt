@@ -40,7 +40,7 @@ public:
 
     const Coord getDirectionVector() const;
 
-    void step(Apple apple);
+    void step(Apple &apple);
 };
 
 #endif // SNAKE_H

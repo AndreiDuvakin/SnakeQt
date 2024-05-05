@@ -1,5 +1,4 @@
 #include "snake.h"
-#include <iostream>
 
 Snake::Snake() : live(true), direction(Direction::UP) {}
 
@@ -20,7 +19,7 @@ const std::vector<Coord> Snake::getSnakeCoords() const {
 const bool Snake::isAlive() const {
     return this->live;
 }
-#include <QDebug>
+
 void Snake::setDirection(Direction direction) {
     this->direction = direction;
 }
@@ -41,19 +40,18 @@ const Coord Snake::getDirectionVector() const {
             return Coord(1, 0);
     }
 }
-#include <qdebug.h>
+
 void Snake::checkIsAlive() {
     Coord headCoord = this->snakeCoords.front();
+
     if (headCoord.x < 0 || headCoord.x >= 10 || headCoord.y < 0 || headCoord.y >= 10) {
         this->live = false;
-        qDebug() << "123";
         return;
     }
 
     for (int i = 1; i < this->snakeCoords.size(); i++) {
         if (headCoord == this->snakeCoords[i]) {
             this->live = false;
-            qDebug() << "123456";
             return;
         }
     }
@@ -75,7 +73,7 @@ void Snake::setStartPosition(Size fieldSize) {
 }
 
 
-void Snake::step(Apple apple) {
+void Snake::step(Apple &apple) {
     Coord headCoord = this->snakeCoords.front();
     Coord snakeDirection = this->getDirectionVector();
 
@@ -89,7 +87,7 @@ void Snake::step(Apple apple) {
     if (newCoords != apple.getCors()) {
         this->removeCoord();
     } else {
-        apple.regenerateCors();
+        apple.regenerateCors(this->snakeCoords);
     }
 
     this->checkIsAlive();
