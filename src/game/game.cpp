@@ -9,11 +9,11 @@ const Field Game::getField() const {
     return this->field;
 }
 
-const Snake Game::getSnake() const {
+Snake &Game::getSnake() {
     return this->snake;
 }
 
-const Apple Game::getApple() const {
+Apple &Game::getApple() {
     return this->apple;
 }
 

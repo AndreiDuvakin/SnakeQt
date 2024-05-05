@@ -19,11 +19,11 @@ public:
 
     const Field getField() const;
 
-    const Snake getSnake() const;
+    Snake &getSnake();
 
     const int getScore() const;
 
-    const Apple getApple() const;
+    Apple &getApple();
 
     void step();
 };

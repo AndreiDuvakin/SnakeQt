@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "src/game/game.h"
+#include <QGraphicsRectItem>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -16,13 +17,16 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
     void resizeEvent(QResizeEvent *event) override;
+    void keyPressEvent(QKeyEvent *event) override;
 
 private:
     Ui::MainWindow *ui;
-    void resizeTable();
-    Game game;
-    void renderTable();
     QTimer *timer;
+    Game game;
+    QGraphicsScene *scene;
+
+    void resizeTable();
+    void renderTable();
 
  private slots:
     void updateGame();

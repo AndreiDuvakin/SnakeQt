@@ -1,12 +1,18 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
-#include <QLabel>
 #include <QTimer>
+#include <QKeyEvent>
+#include <QMessageBox>
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    setFocusPolicy(Qt::StrongFocus);
+
+    scene = new QGraphicsScene(this);
 
     QTimer::singleShot(100, [=]() { this->resizeTable(); });
     QTimer::singleShot(100, [=]() { this->renderTable(); });
@@ -23,63 +29,62 @@ MainWindow::~MainWindow()
 
 void MainWindow::updateGame() {
     this->game.step();
+    if (!this->game.getSnake().isAlive()) {
+        QMessageBox::information(this, "Игра окончена", "Вы проиграли");
+    }
     this->renderTable();
 }
 
 void MainWindow::renderTable() {
-    ui->tableWidget->clear();
+    this->scene->clear();
 
     std::vector<Coord> snakeCoords = this->game.getSnake().getSnakeCoords();
     Coord appleCoord = this->game.getApple().getCors();
+    int cellWidth = ui->graphicsView->width() / this->game.getField().getSize().width;
+    int cellHeight = ui->graphicsView->height() / this->game.getField().getSize().height;
 
-    for (int column = 0;column < ui->tableWidget->columnCount();column++) {
-        for (int row = 0;row < ui->tableWidget->rowCount();row++) {
-            QLabel *label = new QLabel();
-
-            Coord currentCoord(column, row);
-            bool isSnakeCell = std::find(snakeCoords.begin(), snakeCoords.end(), currentCoord) != snakeCoords.end();
-
-            if (isSnakeCell) {
-                label->setStyleSheet("background-color: green;");
-            }
-
-            if (column == appleCoord.x && row == appleCoord.y) {
-                label->setStyleSheet("background-color: red");
-            }
-
-            ui->tableWidget->setCellWidget(row, column, label);
-        }
+    for (int i = 0; i < snakeCoords.size();i++) {
+        QGraphicsRectItem *snakePart = new QGraphicsRectItem();
+        snakePart->setRect(snakeCoords[i].x * cellWidth, snakeCoords[i].y * cellHeight, cellWidth, cellHeight);
+        snakePart->setBrush(QBrush(Qt::green));
+        scene->addItem(snakePart);
     }
+
+    QGraphicsRectItem *apple = new QGraphicsRectItem();
+    apple->setRect(appleCoord.x * cellWidth, appleCoord.y * cellHeight, cellWidth, cellHeight);
+    apple->setBrush(QBrush(Qt::red));
+    this->scene->addItem(apple);
+
+    ui->graphicsView->setScene(this->scene);
 }
 
 void MainWindow::resizeTable() {
     int tableSize = std::min(this->width(), this->height()) - 20;
-    QSize newSize(tableSize, tableSize);
+        QSize newSize(tableSize, tableSize);
 
-    ui->tableWidget->resize(newSize);
+    ui->graphicsView->resize(newSize);
 
     int newX = (this->width() - tableSize) / 2;
     int newY = (this->height() - tableSize) / 2;
 
-    ui->tableWidget->move(newX, newY);
+    ui->graphicsView->move(newX, newY);
 
-    int columnCount = this->game.getField().getSize().width,
-            rowCount = this->game.getField().getSize().height;
-
-    ui->tableWidget->setColumnCount(columnCount);
-    ui->tableWidget->setRowCount(rowCount);
-
-    int columnWidht = ui->tableWidget->width()  / columnCount,
-            rowHeight = ui->tableWidget->height() / rowCount;
-
-    for (int i = 0;i < columnCount; i++) {
-        ui->tableWidget->setColumnWidth(i, columnWidht);
-    }
-
-    for (int i = 0;i < rowCount; i++) {
-        ui->tableWidget->setRowHeight(i, rowHeight);
-    }
+    scene->setSceneRect(0, 0, ui->graphicsView->width(), ui->graphicsView->height());
 }
+
+void MainWindow::keyPressEvent(QKeyEvent *event) {
+    if (event->key() == Qt::Key_W) {
+        this->game.getSnake().setDirection(Direction::UP);
+    } else if (event->key() == Qt::Key_A) {
+        this->game.getSnake().setDirection(Direction::LEFT);
+    } else if (event->key() == Qt::Key_S) {
+        this->game.getSnake().setDirection(Direction::DOWN);
+    } else if (event->key() == Qt::Key_D) {
+        this->game.getSnake().setDirection(Direction::RIGHT);
+    }
+    QMainWindow::keyPressEvent(event);
+}
+
 
 void MainWindow::resizeEvent(QResizeEvent *event) {
     this->resizeTable();
